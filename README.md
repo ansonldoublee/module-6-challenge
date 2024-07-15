@@ -1,8 +1,8 @@
 # module-6-challenge
 
 ## URLS
-https://github.com/ansonldoublee/module-6-challenge/
-https://ansonldoublee.github.io/module-6-challenge/
+* https://github.com/ansonldoublee/module-6-challenge/
+* https://ansonldoublee.github.io/module-6-challenge/
 
 
 ## User Story
