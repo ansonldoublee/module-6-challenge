@@ -3,8 +3,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchForm = document.getElementById('searchForm');
     const cityInput = document.getElementById('cityInput');
     const currentWeather = document.getElementById('currentWeather');
+    const forecastSection = document.getElementById('forecastSection');
     const forecast = document.getElementById('forecast');
+    const noCityMessage = document.getElementById('noCityMessage');
     const history = document.getElementById('history');
+
+    const weatherColors = {
+        Clear: 'bg-yellow-200',
+        Clouds: 'bg-gray-200',
+        Rain: 'bg-blue-200',
+        Drizzle: 'bg-blue-300',
+        Thunderstorm: 'bg-purple-200',
+        Snow: 'bg-white',
+        Mist: 'bg-gray-300',
+        Smoke: 'bg-gray-400',
+        Haze: 'bg-gray-300',
+        Dust: 'bg-yellow-300',
+        Fog: 'bg-gray-400',
+        Sand: 'bg-yellow-400',
+        Ash: 'bg-gray-500',
+        Squall: 'bg-blue-500',
+        Tornado: 'bg-red-500'
+    };
 
     const saveToHistory = (city) => {
         let history = JSON.parse(localStorage.getItem('history')) || [];
@@ -50,8 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
         forecast.innerHTML = '';
         for (let i = 0; i < data.list.length; i += 8) {
             const day = data.list[i];
+            const weatherCondition = day.weather[0].main;
+            const bgColor = weatherColors[weatherCondition] || 'bg-gray-100'; // Default color if condition not found
+
             forecast.innerHTML += `
-                <div class="p-4 bg-gray-100 rounded-lg">
+                <div class="p-4 ${bgColor} rounded-lg">
                     <h3 class="font-bold">${new Date(day.dt * 1000).toLocaleDateString()}</h3>
                     <p>Temp: ${day.main.temp} °C</p>
                     <p>Humidity: ${day.main.humidity} %</p>
@@ -60,6 +83,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
         }
+
+        // Show the forecast section and hide the no city message
+        forecastSection.classList.remove('hidden');
+        noCityMessage.classList.add('hidden');
 
         saveToHistory(city);
     };
@@ -75,3 +102,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     renderHistory();
 });
+
