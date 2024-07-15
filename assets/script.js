@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const forecast = document.getElementById('forecast');
     const noCityMessage = document.getElementById('noCityMessage');
     const history = document.getElementById('history');
+    const clearHistoryButton = document.getElementById('clearHistory');
 
     const weatherColors = {
         Clear: 'bg-yellow-200',
@@ -27,21 +28,28 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const saveToHistory = (city) => {
-        let history = JSON.parse(localStorage.getItem('history')) || [];
-        if (!history.includes(city)) {
-            history.push(city);
-            localStorage.setItem('history', JSON.stringify(history));
+        let historyList = JSON.parse(localStorage.getItem('history')) || [];
+        if (!historyList.includes(city)) {
+            historyList.push(city);
+            if (historyList.length > 5) {
+                historyList.shift();
+            }
+            localStorage.setItem('history', JSON.stringify(historyList));
             renderHistory();
         }
     };
-
+    
     const renderHistory = () => {
         history.innerHTML = '';
         const historyItems = JSON.parse(localStorage.getItem('history')) || [];
+        
+        // Show or hide the clear button
+        clearHistoryButton.style.display = historyItems.length === 0 ? 'none' : 'inline-block';
+    
         historyItems.forEach(city => {
             const button = document.createElement('button');
             button.textContent = city;
-            button.classList.add('bg-gray-300', 'text-gray-700', 'px-4', 'py-2', 'rounded', 'hover:bg-gray-400');
+            button.classList.add('bg-gray-300', 'text-gray-700', 'px-4', 'py-2', 'rounded', 'hover:bg-gray-400', 'w-full', 'mb-2');
             button.addEventListener('click', () => fetchWeather(city));
             history.appendChild(button);
         });
@@ -71,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < data.list.length; i += 8) {
             const day = data.list[i];
             const weatherCondition = day.weather[0].main;
-            const bgColor = weatherColors[weatherCondition] || 'bg-gray-100'; // Default color if condition not found
+            const bgColor = weatherColors[weatherCondition] || 'bg-gray-100';
 
             forecast.innerHTML += `
                 <div class="p-4 ${bgColor} rounded-lg">
@@ -84,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Show the forecast section and hide the no city message
         forecastSection.classList.remove('hidden');
         noCityMessage.classList.add('hidden');
 
@@ -100,6 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    clearHistoryButton.addEventListener('click', () => {
+        localStorage.removeItem('history');
+        renderHistory();
+    });
+
     renderHistory();
 });
-
